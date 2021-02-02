@@ -19,16 +19,20 @@ const transporter = nodemailer.createTransport(
   }
 )
 
-try {
-  // Load email addresses and mail body
-  const emails = fs.readFileSync(path.join(__dirname, 'emails.csv'), 'utf-8').split('\n')
-  const content = fs.readFileSync(path.join(__dirname, 'mail.html'), 'utf-8')
-
-  // Send mail for each email
-  for(let email of emails){
+// Load email addresses and mail body
+const emails = fs.readFileSync(path.join(__dirname, 'emails.csv'), 'utf-8').split('\n')
+const content = fs.readFileSync(path.join(__dirname, 'mail.html'), 'utf-8')
+console.log(emails)
+// Send mail for each email
+for(let email of emails){
+  if(!/[\w.-]+@[\w.-]+.[a-zA-Z]+/.test(email)){
+    console.log(`Invalid email:'${email}'`)
+    continue
+  }
+  try {
     transporter.sendMail({ to: email, html: content })
   }
-}
-catch (err) {
-  console.error(err);
+  catch (err) {
+    console.error(err);
+  }
 }
